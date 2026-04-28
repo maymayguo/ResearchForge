@@ -9,8 +9,6 @@ from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
 from loguru import logger
 
 # 桌面打包模式：设置合理默认值（可被 .env 覆盖）
@@ -52,8 +50,11 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(router)
 
-# 挂载前端静态资源（仅在 dist 存在时）
+# 挂载前端静态资源（仅在本地桌面模式下 dist 存在时）
 if FRONTEND_DIST.exists():
+    from fastapi.staticfiles import StaticFiles
+    from fastapi.responses import FileResponse
+
     app.mount("/assets", StaticFiles(directory=str(FRONTEND_DIST / "assets")), name="assets")
 
     @app.get("/")
