@@ -9,6 +9,7 @@ DB_PATH = Path(os.environ.get("DB_PATH", str(_default)))
 
 
 def get_conn() -> sqlite3.Connection:
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL")
