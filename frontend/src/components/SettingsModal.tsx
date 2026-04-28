@@ -66,13 +66,13 @@ export function SettingsModal({ onClose }: Props) {
             自定义 API Key
           </label>
           <p className="text-xs mb-2.5 leading-relaxed" style={{ color: "#a09b94" }}>
-            填入后使用你自己的 Anthropic/OpenAI key；留空则使用服务器默认 key。
+            填入你的 DeepSeek / Anthropic / OpenAI API Key，留空则使用服务器默认配置。
           </p>
           <input
             type="password"
             value={apiKey}
             onChange={e => setApiKey(e.target.value)}
-            placeholder="sk-ant-... 或留空"
+            placeholder="sk-... 或留空"
             className="w-full px-3 py-2.5 rounded-lg text-sm outline-none transition-all"
             style={{ background: "#F8F6F3", border: "1px solid #E4E1DB", color: "#1c1a17" }}
             onFocus={e => (e.target.style.borderColor = PURPLE)}
