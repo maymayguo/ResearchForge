@@ -65,13 +65,32 @@ class DesignAgent:
 
         logger.info(f"[DesignAgent] Turn {turn_number}, phase={canvas.phase}, clarity={canvas.clarity_score:.1f}")
 
-        raw = await self.llm.chat(
-            system=SYSTEM_PROMPT,
-            messages=messages,
-            response_format="json",
-        )
+        # 自动重试：JSON 解析失败时最多重试 2 次
+        last_error = None
+        for attempt in range(3):
+            try:
+                raw = await self.llm.chat(
+                    system=SYSTEM_PROMPT,
+                    messages=messages,
+                    response_format="json",
+                )
+                result = self._parse_response(raw.content, canvas)
+                # 如果 reply 是错误提示（解析失败的回退值），继续重试
+                if result[0].startswith("（模型回复格式异常"):
+                    last_error = "JSON parse fallback triggered"
+                    logger.warning(f"[DesignAgent] Attempt {attempt+1} returned fallback reply, retrying...")
+                    continue
+                return result
+            except Exception as e:
+                last_error = str(e)
+                logger.warning(f"[DesignAgent] Attempt {attempt+1} failed: {e}")
+                if attempt < 2:
+                    continue
+                raise
 
-        return self._parse_response(raw.content, canvas)
+        # 3 次均失败，返回友好提示但不中断对话
+        logger.error(f"[DesignAgent] All 3 attempts failed. Last error: {last_error}")
+        return "抱歉，我刚才的回复出了点问题，请把你的问题再发一遍，我来继续。", canvas, None, None
 
     def _build_windowed_history(self, history: list[Message]) -> list[dict]:
         """保留最近 N 条消息（完整轮次），并将早期历史压缩为一句摘要。"""
