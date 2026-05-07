@@ -403,6 +403,31 @@ export function ResearchDesigner() {
             </div>
 
             <p className="text-xs mt-4" style={{ color: "#c5c0b8" }}>Enter 发送 · Shift+Enter 换行</p>
+
+            {/* ── 预设研究方向卡片 ── */}
+            <div className="mt-5 w-full max-w-xl">
+              <p className="text-xs mb-2.5 text-center" style={{ color: "#b5b0a8" }}>或者选择一个方向试试</p>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { title: "低空经济投资机会", desc: "分析市场规模、政策环境和投资逻辑" },
+                  { title: "AI 客服竞品格局", desc: "梳理国内外产品的能力对比和市场分布" },
+                  { title: "儿童英语学习产品", desc: "调研 2-6 岁儿童的需求痛点和现有方案" },
+                  { title: "如何验证产品 idea", desc: "设计验证实验和用户调研框架" },
+                ].map(card => (
+                  <button
+                    key={card.title}
+                    onClick={() => { setInput(card.title + "：" + card.desc); setTimeout(() => centerTextareaRef.current?.focus(), 50); }}
+                    className="text-left p-3 rounded-xl transition-all"
+                    style={{ background: "rgba(108,99,224,0.05)", border: "1px solid rgba(108,99,224,0.12)" }}
+                    onMouseEnter={e => { e.currentTarget.style.background = "rgba(108,99,224,0.12)"; e.currentTarget.style.borderColor = PURPLE; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = "rgba(108,99,224,0.05)"; e.currentTarget.style.borderColor = "rgba(108,99,224,0.12)"; }}
+                  >
+                    <div className="text-sm font-medium mb-0.5" style={{ color: "#1c1a17" }}>{card.title}</div>
+                    <div className="text-xs" style={{ color: "#a09b94" }}>{card.desc}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         ) : (
           /* ── 对话状态 ── */

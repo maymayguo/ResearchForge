@@ -1,10 +1,10 @@
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ResearchDesigner } from "./components/ResearchDesigner";
-import { LoginPage } from "./components/LoginPage";
+import { LandingPage } from "./components/LandingPage";
 
 function AppInner() {
   const { token } = useAuth();
-  if (!token) return <LoginPage />;
+  if (!token) return <LandingPage />;
   return <ResearchDesigner />;
 }
 
