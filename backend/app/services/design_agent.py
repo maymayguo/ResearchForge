@@ -98,9 +98,9 @@ class DesignAgent:
                     continue
                 raise
 
-        # 3 次均失败，返回友好提示但不中断对话
+        # 3 次均失败，抛出异常（由 routes.py 清理用户消息，前端显示可重试的错误提示）
         logger.error(f"[DesignAgent] All 3 attempts failed. Last error: {last_error}")
-        return "抱歉，我刚才的回复出了点问题，请把你的问题再发一遍，我来继续。", canvas, None, None
+        raise RuntimeError(f"模型回复解析失败（已重试 3 次）：{last_error}")
 
     def _build_windowed_history(self, history: list[Message]) -> list[dict]:
         """保留最近 N 条消息（完整轮次），并将早期历史压缩为一句摘要。"""
@@ -146,8 +146,15 @@ class DesignAgent:
         try:
             data = json.loads(content)
         except json.JSONDecodeError as e:
-            logger.warning(f"[DesignAgent] JSON parse failed: {e}. Raw: {raw_content[:200]}")
-            # 尝试用正则从残缺 JSON 里抢救 reply 字段
+            # 检测是否因 token 截断（结尾缺少 }）——截断时重试没意义，直接抛出让上层处理
+            is_truncated = not content.rstrip().endswith("}")
+            logger.warning(
+                f"[DesignAgent] JSON parse failed ({'truncated' if is_truncated else 'malformed'}): {e}. "
+                f"Raw tail: ...{raw_content[-100:]}"
+            )
+            if is_truncated:
+                raise RuntimeError(f"模型输出被截断（max_tokens 不足），JSON 不完整：{e}")
+            # 非截断：尝试用正则从残缺 JSON 里抢救 reply 字段
             m = re.search(r'"reply"\s*:\s*"((?:[^"\\]|\\.)*)"', content)
             fallback_reply = m.group(1).replace('\\"', '"') if m else "（模型回复格式异常，请重试）"
             return fallback_reply, current_canvas, None, None

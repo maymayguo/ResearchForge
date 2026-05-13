@@ -40,7 +40,7 @@ class Settings(BaseSettings):
 
     # ── 设计 Agent 参数 ──────────────────────
     design_agent_temperature: float = 0.7
-    design_agent_max_tokens: int = 4096
+    design_agent_max_tokens: int = 8192
     # 保留最近 N 轮完整对话历史（避免超上下文）
     design_agent_history_window: int = 12
 
