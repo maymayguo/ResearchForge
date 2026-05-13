@@ -69,12 +69,13 @@ class SessionStore:
         messages_json = json.dumps([m.model_dump(mode="json") for m in session.messages], ensure_ascii=False)
         canvas_json = session.canvas.model_dump_json()
         plan_json = session.research_plan.model_dump_json() if session.research_plan else None
+        draft_json = session.question_draft.model_dump_json() if getattr(session, "question_draft", None) else None
         with get_conn() as conn:
             conn.execute(
                 """UPDATE research_sessions
-                   SET title=?, messages=?, canvas=?, research_plan=?, status=?, updated_at=?
+                   SET title=?, messages=?, canvas=?, research_plan=?, question_draft=?, status=?, updated_at=?
                    WHERE id=?""",
-                (title, messages_json, canvas_json, plan_json, session.status, now, session.id),
+                (title, messages_json, canvas_json, plan_json, draft_json, session.status, now, session.id),
             )
             conn.commit()
 
@@ -92,7 +93,8 @@ class SessionStore:
         with get_conn() as conn:
             rows = conn.execute(
                 """SELECT id, title, created_at FROM research_sessions
-                   WHERE user_id = ? ORDER BY updated_at DESC LIMIT 50""",
+                   WHERE user_id = ? AND title != '新研究'
+                   ORDER BY updated_at DESC LIMIT 50""",
                 (user_id,),
             ).fetchall()
         return [{"id": r["id"], "title": r["title"], "createdAt": r["created_at"]} for r in rows]
@@ -100,26 +102,41 @@ class SessionStore:
     # ── 内部工具 ─────────────────────────────────────
 
     def _from_row(self, row) -> Session:
-        session = Session.__new__(Session)
-        session.id = row["id"]
-        session.status = row["status"] if row["status"] in ("active", "completed") else "active"
         raw_msgs = json.loads(row["messages"] or "[]")
-        session.messages = [Message(**m) for m in raw_msgs]
+        messages = [Message.model_validate(m) for m in raw_msgs]
+
         canvas_json = row["canvas"] or "{}"
         try:
-            session.canvas = UnderstandingCanvas.model_validate_json(canvas_json)
+            canvas = UnderstandingCanvas.model_validate_json(canvas_json)
         except Exception:
-            session.canvas = UnderstandingCanvas()
+            canvas = UnderstandingCanvas()
+
+        research_plan = None
         if row["research_plan"]:
             try:
-                session.research_plan = ResearchPlan.model_validate_json(row["research_plan"])
+                research_plan = ResearchPlan.model_validate_json(row["research_plan"])
             except Exception:
-                session.research_plan = None
-        else:
-            session.research_plan = None
-        from datetime import datetime as dt
-        session.created_at = dt.fromisoformat(row["created_at"]) if row["created_at"] else dt.utcnow()
-        return session
+                pass
+
+        question_draft = None
+        if row["question_draft"]:
+            try:
+                question_draft = ResearchQuestion.model_validate_json(row["question_draft"])
+            except Exception:
+                pass
+
+        created_at = datetime.fromisoformat(row["created_at"]) if row["created_at"] else datetime.now(timezone.utc)
+        status = row["status"] if row["status"] in ("active", "completed") else "active"
+
+        return Session.model_validate({
+            "id": row["id"],
+            "status": status,
+            "messages": messages,
+            "canvas": canvas,
+            "research_plan": research_plan,
+            "question_draft": question_draft,
+            "created_at": created_at,
+        })
 
 
 # 全局单例

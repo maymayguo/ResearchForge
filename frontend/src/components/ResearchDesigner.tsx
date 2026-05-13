@@ -145,30 +145,10 @@ export function ResearchDesigner() {
     } catch { /* 静默失败 */ }
   }, []);
 
-  // ── 会话初始化 ───────────────────────────────
-  const initSession = useCallback(async () => {
-    if (initingRef.current) return;
-    initingRef.current = true;
-    try {
-      setError(null);
-      const res = await createSession();
-      setSessionId(res.session_id);
-      setMessages([res.welcome_message]);
-      setCanvas(res.canvas);
-      setResearchPlan(null);
-      setQuestionDraft(null);
-      setInput("");
-    } catch {
-      setError("无法连接到服务器，请确认后端已启动。");
-    } finally {
-      initingRef.current = false;
-    }
-  }, []);
-
+  // ── 会话初始化（懒创建，首次发消息时才建会话）───────────────────────────────
   useEffect(() => {
-    initSession();
     refreshSessions();
-  }, [initSession, refreshSessions]);
+  }, [refreshSessions]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -176,29 +156,51 @@ export function ResearchDesigner() {
 
   // ── 核心发送逻辑 ─────────────────────────────
   const doSend = useCallback(async (text: string) => {
-    if (!text.trim() || !sessionId || loading) return;
+    if (!text.trim() || loading) return;
+
+    // 懒创建会话：首次发消息时才建 DB 记录
+    let activeSessionId = sessionId;
+    let baseMessages = messages;
+    if (!activeSessionId) {
+      if (initingRef.current) return;
+      initingRef.current = true;
+      try {
+        setError(null);
+        const res = await createSession();
+        activeSessionId = res.session_id;
+        setSessionId(res.session_id);
+        setCanvas(res.canvas);
+        baseMessages = [res.welcome_message];
+        setMessages(baseMessages);
+      } catch {
+        setError("无法连接到服务器，请确认后端已启动。");
+        initingRef.current = false;
+        return;
+      }
+      initingRef.current = false;
+    }
+
     const userMsg: Message = { id: crypto.randomUUID(), role: "user", content: text.trim(), timestamp: new Date().toISOString() };
-    const newMessages = [...messages, userMsg];
+    const newMessages = [...baseMessages, userMsg];
     setMessages(newMessages);
     setInput("");
     setLoading(true);
     setError(null);
     abortRef.current = new AbortController();
     try {
-      const res = await sendMessage(sessionId, userMsg.content, abortRef.current.signal);
+      const res = await sendMessage(activeSessionId, userMsg.content, abortRef.current.signal);
       const withReply = [...newMessages, res.message];
       setMessages(withReply);
       setCanvas(res.canvas);
       if (res.research_plan) setResearchPlan(res.research_plan);
       if (res.question_draft) setQuestionDraft(res.question_draft);
-      // 刷新侧边栏（更新标题）
       refreshSessions();
     } catch (e: unknown) {
       if ((e as Error).name === "AbortError") return;
       const msg = e instanceof Error ? e.message : "请求失败，请重试";
       if (msg.includes("Session not found") || msg.includes("404")) {
         setMessages([]);
-        await initSession();
+        setSessionId(null);
       } else {
         setError(msg);
       }
@@ -207,14 +209,20 @@ export function ResearchDesigner() {
       abortRef.current = null;
       textareaRef.current?.focus();
     }
-  }, [sessionId, loading, messages, refreshSessions, initSession]);
+  }, [sessionId, loading, messages, refreshSessions]);
 
   const handleSend = useCallback(() => doSend(input), [doSend, input]);
   const handleStop = () => abortRef.current?.abort();
 
-  const handleNewSession = async () => {
+  const handleNewSession = () => {
     if (loading) abortRef.current?.abort();
-    await initSession();
+    setSessionId(null);
+    setMessages([]);
+    setCanvas(null);
+    setResearchPlan(null);
+    setQuestionDraft(null);
+    setInput("");
+    setError(null);
   };
 
   const handleSelectSession = useCallback(async (id: string) => {
@@ -238,7 +246,13 @@ export function ResearchDesigner() {
       await deleteSessionApi(id);
     } catch { /* 静默 */ }
     setSessions(prev => prev.filter(s => s.id !== id));
-    if (id === sessionId) initSession();
+    if (id === sessionId) {
+      setSessionId(null);
+      setMessages([]);
+      setCanvas(null);
+      setResearchPlan(null);
+      setQuestionDraft(null);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -370,7 +384,7 @@ export function ResearchDesigner() {
                 onKeyDown={handleCenterKeyDown}
                 placeholder="描述你的研究想法，比如：我想研究一下低空经济赛道的投资机会…"
                 rows={3}
-                disabled={loading || !sessionId}
+                disabled={loading}
                 className="w-full resize-none bg-transparent text-sm outline-none disabled:opacity-40 leading-relaxed"
                 style={{ color: "#1C1C1C" }}
               />
@@ -391,7 +405,7 @@ export function ResearchDesigner() {
                 </div>
                 <button
                   onClick={() => doSend(input)}
-                  disabled={!input.trim() || !sessionId || loading}
+                  disabled={!input.trim() || loading}
                   className="w-8 h-8 rounded-full flex items-center justify-center text-white transition-opacity disabled:opacity-30"
                   style={{ background: PURPLE }}
                 >
@@ -505,14 +519,14 @@ export function ResearchDesigner() {
                   onKeyDown={handleKeyDown}
                   placeholder={isCrystallizeQuestion ? "用你自己的话重新说一遍这个问题…" : "描述你的研究想法…"}
                   rows={2}
-                  disabled={loading || !sessionId}
+                  disabled={loading}
                   className="flex-1 resize-none bg-transparent px-3 py-2.5 text-sm outline-none disabled:opacity-40"
                   style={{ color: "#1C1C1C" }}
                 />
                 {loading ? (
                   <button onClick={handleStop} className="mb-1.5 mr-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors" style={{ background: "#F0EDE8", color: "#6A6A6A" }}>停止</button>
                 ) : (
-                  <button onClick={handleSend} disabled={!input.trim() || !sessionId}
+                  <button onClick={handleSend} disabled={!input.trim()}
                     className="mb-1.5 mr-1.5 px-4 py-1.5 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-30"
                     style={{ background: PURPLE }}
                     onMouseEnter={e => { if (!(e.currentTarget as HTMLButtonElement).disabled) e.currentTarget.style.background = "#5a51c8"; }}

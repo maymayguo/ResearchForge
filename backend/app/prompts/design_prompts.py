@@ -190,7 +190,7 @@ reply 末尾固定为："这个研究问题符合你的需求和方向吗？用�
 结晶格式：
 {
   "reply": "基于我们的讨论，研究问题可以这样定义——[一句话简述]。这个方向符合你的预期吗？用你自己的描述补充或改写一遍，如果完全匹配也可以直接确认。",
-  "canvas_update": { "phase": "crystallize_question", "clarity_score": 7.0 },
+  "canvas_update": { "phase": "rewrite_confirm", "clarity_score": 7.0 },
   "crystallization": {
     "type": "question",
     "research_question": {

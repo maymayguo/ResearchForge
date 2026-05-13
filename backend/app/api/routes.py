@@ -128,6 +128,7 @@ async def chat(req: ChatRequest, user_id: str = Depends(get_current_user_id)):
         raise HTTPException(status_code=500, detail=f"Agent error: {str(e)}")
 
     ai_msg = Message(role="assistant", content=reply_text)
+    session.messages.append(ai_msg)
     session.canvas = updated_canvas
     if research_plan:
         session.research_plan = research_plan

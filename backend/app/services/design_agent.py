@@ -59,8 +59,18 @@ class DesignAgent:
             turn_number=turn_number,
         )
 
+        # 当处于 rewrite_confirm 或 crystallize_question（已有问题草稿）阶段时，
+        # 若用户回复带有确认/改写意图，强制推进到结晶二
+        force_directive = ""
+        if canvas.phase in ("rewrite_confirm", "crystallize_question"):
+            force_directive = (
+                "\n\n[SYSTEM强制指令：用户已确认或改写了研究问题，本轮必须立即进入 crystallize_framework 阶段。"
+                "phase 必须设为 crystallize_framework，crystallization.type 必须为 framework，"
+                "并输出完整研究框架 JSON。绝对不允许再次要求用户确认研究问题。]"
+            )
+
         messages = windowed + [
-            {"role": "user", "content": f"{canvas_context}\n\n用户：{user_message}"}
+            {"role": "user", "content": f"{canvas_context}\n\n用户：{user_message}{force_directive}"}
         ]
 
         logger.info(f"[DesignAgent] Turn {turn_number}, phase={canvas.phase}, clarity={canvas.clarity_score:.1f}")
@@ -184,6 +194,11 @@ class DesignAgent:
                 data["question_evolution"] = existing
             else:
                 data[key] = value
+
+        # 安全保护：如果 LLM 没有推进 rewrite_confirm / crystallize_question，强制跳到 crystallize_framework
+        if canvas.phase in ("rewrite_confirm", "crystallize_question") and data.get("phase") in ("rewrite_confirm", "crystallize_question"):
+            logger.warning(f"[DesignAgent] Force-advancing phase: {canvas.phase} → crystallize_framework")
+            data["phase"] = "crystallize_framework"
 
         try:
             return UnderstandingCanvas(**data)
