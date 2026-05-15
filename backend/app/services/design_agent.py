@@ -64,13 +64,18 @@ class DesignAgent:
         force_directive = ""
         if canvas.phase in ("rewrite_confirm", "crystallize_question"):
             force_directive = (
-                "\n\n[SYSTEM强制指令：用户已确认或改写了研究问题，本轮必须立即进入 crystallize_framework 阶段。"
-                "phase 必须设为 crystallize_framework，crystallization.type 必须为 framework，"
-                "并输出完整研究框架 JSON。绝对不允许再次要求用户确认研究问题。]"
+                "\n[SYSTEM强制指令]\n"
+                "用户已改写或确认了研究问题。本轮必须立即生成完整研究框架，规则如下：\n"
+                f"1. crystallization.research_plan.question.core_statement 必须使用用户的版本：「{user_message}」，"
+                "不得使用 canvas 中存储的旧版本\n"
+                "2. phase 设为 crystallize_framework\n"
+                "3. crystallization.type 设为 framework，输出完整研究框架 JSON\n"
+                "4. 绝对禁止再次要求用户确认研究问题\n"
+                "[END SYSTEM指令]\n"
             )
 
         messages = windowed + [
-            {"role": "user", "content": f"{canvas_context}\n\n用户：{user_message}{force_directive}"}
+            {"role": "user", "content": f"{canvas_context}\n{force_directive}\n用户：{user_message}"}
         ]
 
         logger.info(f"[DesignAgent] Turn {turn_number}, phase={canvas.phase}, clarity={canvas.clarity_score:.1f}")
