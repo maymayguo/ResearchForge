@@ -69,9 +69,9 @@ interface CanvasPanelProps {
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-const PURPLE = '#6c63e0'
-const PURPLE_LIGHT = '#ece9fc'
-const PURPLE_MID = 'rgba(108,99,224,0.18)'
+const PRIMARY = '#1C1C1C'
+const PRIMARY_LIGHT = '#F1F1F1'
+const PRIMARY_MID = 'rgba(28,28,28,0.16)'
 
 const PHASES = [
   { key: 'exploring',             label: '探索' },
@@ -90,6 +90,41 @@ function getPhaseIndex(phase?: string) {
   return idx === -1 ? 0 : idx
 }
 
+function hasItems(value?: unknown[]) {
+  return Array.isArray(value) && value.length > 0
+}
+
+function getProgressIndex(canvas: CanvasData, hasCrystal: boolean) {
+  if (canvas.phase === 'confirmed') return 8
+  if (canvas.phase === 'crystallize_framework') return 7
+  if (canvas.phase === 'rewrite_confirm') return 6
+  if (canvas.phase === 'crystallize_question' || hasCrystal) return 5
+
+  const clarity = canvas.clarity_score ?? 0
+  let index = 0
+
+  if (clarity >= 1 || canvas.known_context || hasItems(canvas.open_directions) || hasItems(canvas.question_evolution)) {
+    index = Math.max(index, 1)
+  }
+  if (clarity >= 2.5 || canvas.anchor_observation) {
+    index = Math.max(index, 2)
+  }
+  if (clarity >= 4 || canvas.key_assumption) {
+    index = Math.max(index, 3)
+  }
+  if (
+    clarity >= 5.5 ||
+    canvas.decision_context ||
+    canvas.audience ||
+    hasItems(canvas.hard_constraints) ||
+    hasItems(canvas.scope_out)
+  ) {
+    index = Math.max(index, 4)
+  }
+
+  return index
+}
+
 // ─── Confidence badge ─────────────────────────────────────────────────────────
 function ConfBadge({ level }: { level?: string | null }) {
   if (!level) return null
@@ -97,7 +132,7 @@ function ConfBadge({ level }: { level?: string | null }) {
   return (
     <span style={{
       fontSize: 8.5, padding: '1px 5px', borderRadius: 99,
-      background: PURPLE_LIGHT, color: PURPLE,
+      background: PRIMARY_LIGHT, color: PRIMARY,
       fontWeight: 600, marginLeft: 3, flexShrink: 0,
     }}>
       {labels[level] ?? level}
@@ -157,14 +192,14 @@ function InfoCard({ label, value, placeholder, extra, delay = 0 }: InfoCardProps
       <div style={{
         fontSize: 9.5, fontWeight: 600, letterSpacing: '0.06em',
         textTransform: 'uppercase' as const,
-        color: filled ? '#8c877f' : '#c0bbb3',
+        color: filled ? '#6F6F6F' : '#B0B0B0',
         marginBottom: 5,
         display: 'flex', alignItems: 'center', gap: 4,
         transition: 'color 0.3s',
       }}>
         <span style={{
           width: 5, height: 5, borderRadius: '50%',
-          background: filled ? PURPLE : '#e0ddd8',
+          background: filled ? PRIMARY : '#e0ddd8',
           flexShrink: 0, display: 'inline-block',
           transition: 'background 0.3s',
         }} />
@@ -173,7 +208,7 @@ function InfoCard({ label, value, placeholder, extra, delay = 0 }: InfoCardProps
       </div>
       <div style={{
         fontSize: 11.5, lineHeight: 1.55,
-        color: filled ? '#1c1a17' : '#c8c4bc',
+        color: filled ? '#1C1C1C' : '#BDBDBD',
         fontStyle: filled ? 'normal' : 'italic',
         transition: 'color 0.3s',
       }}>
@@ -185,11 +220,11 @@ function InfoCard({ label, value, placeholder, extra, delay = 0 }: InfoCardProps
 
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function CanvasPanel({ canvas, crystallization }: CanvasPanelProps) {
-  const phaseIdx    = getPhaseIndex(canvas.phase)
   const clarity     = canvas.clarity_score ?? 0
   const clarityPct  = Math.min(clarity / 10, 1)
   const isConfirmed = canvas.phase === 'confirmed'
   const hasCrystal  = Boolean(crystallization)
+  const phaseIdx    = getProgressIndex(canvas, hasCrystal)
 
   const coreQuestion =
     crystallization?.type === 'question'
@@ -205,7 +240,7 @@ export default function CanvasPanel({ canvas, crystallization }: CanvasPanelProp
 
   const secLbl: React.CSSProperties = {
     fontSize: 9.5, fontWeight: 600, letterSpacing: '0.07em',
-    textTransform: 'uppercase', color: '#b0aba3',
+    textTransform: 'uppercase', color: '#9A9A9A',
     marginBottom: 9, display: 'block',
   }
 
@@ -242,13 +277,13 @@ export default function CanvasPanel({ canvas, crystallization }: CanvasPanelProp
                   <div style={{
                     width: active ? 8 : 6, height: active ? 8 : 6,
                     borderRadius: '50%',
-                    background: active ? PURPLE : done ? '#c8c4bc' : '#e4e0d8',
-                    boxShadow: active ? `0 0 0 3px ${PURPLE_MID}` : 'none',
+                    background: active ? PRIMARY : done ? '#BDBDBD' : '#DADADA',
+                    boxShadow: active ? `0 0 0 3px ${PRIMARY_MID}` : 'none',
                     flexShrink: 0, transition: 'all 0.3s',
                   }} />
                   <span style={{
                     fontSize: 9, whiteSpace: 'nowrap',
-                    color: active ? PURPLE : done ? '#b0aba3' : '#d0ccc6',
+                    color: active ? PRIMARY : done ? '#9A9A9A' : '#C7C7C7',
                     fontWeight: active ? 600 : 400,
                     transition: 'color 0.3s',
                   }}>
@@ -258,7 +293,7 @@ export default function CanvasPanel({ canvas, crystallization }: CanvasPanelProp
                 {i < PHASES.length - 1 && (
                   <div style={{
                     flex: 1, height: 1, margin: '0 3px', marginBottom: 14,
-                    background: done ? '#d0ccc6' : '#e8e4de',
+                    background: done ? '#C7C7C7' : '#E1E1E1',
                     transition: 'background 0.3s',
                   }} />
                 )}
@@ -266,10 +301,10 @@ export default function CanvasPanel({ canvas, crystallization }: CanvasPanelProp
             )
           })}
         </div>
-        <div style={{ fontSize: 10, color: '#8c877f', marginTop: 2, fontWeight: 500 }}>
+        <div style={{ fontSize: 10, color: '#6F6F6F', marginTop: 2, fontWeight: 500 }}>
           第 {phaseIdx + 1} 步，共 {PHASES.length} 步 ·{' '}
-          <span style={{ color: PURPLE, fontWeight: 600 }}>
-            {PHASES[phaseIdx]?.label ?? '进行中'}
+          <span style={{ color: PRIMARY, fontWeight: 600 }}>
+            {PHASES[phaseIdx]?.label ?? PHASES[getPhaseIndex(canvas.phase)]?.label ?? '进行中'}
           </span>
         </div>
       </div>
@@ -278,7 +313,7 @@ export default function CanvasPanel({ canvas, crystallization }: CanvasPanelProp
       <div style={{ marginBottom: 18 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 5 }}>
           <span style={{ ...secLbl, marginBottom: 0 }}>清晰度</span>
-          <span style={{ fontSize: 13, fontWeight: 600, color: PURPLE }}>
+          <span style={{ fontSize: 13, fontWeight: 600, color: PRIMARY }}>
             {Math.round(clarity)} / 10
           </span>
         </div>
@@ -286,7 +321,7 @@ export default function CanvasPanel({ canvas, crystallization }: CanvasPanelProp
           <div style={{
             height: '100%', borderRadius: 99,
             width: `${clarityPct * 100}%`,
-            background: `linear-gradient(90deg, #8b84e8, ${PURPLE})`,
+            background: `linear-gradient(90deg, #6F6F6F, ${PRIMARY})`,
             transition: 'width 0.6s cubic-bezier(.4,0,.2,1)',
           }} />
         </div>
@@ -306,15 +341,15 @@ export default function CanvasPanel({ canvas, crystallization }: CanvasPanelProp
       {/* ── Research question ── */}
       <div style={{
         borderRadius: 13, padding: '12px 14px', marginBottom: 6,
-        background: hasCrystal ? 'rgba(236,233,252,0.55)' : 'rgba(255,255,255,0.52)',
-        border: `1px solid ${hasCrystal ? 'rgba(108,99,224,0.22)' : 'rgba(0,0,0,0.07)'}`,
+        background: hasCrystal ? 'rgba(245,245,245,0.86)' : 'rgba(255,255,255,0.52)',
+        border: `1px solid ${hasCrystal ? 'rgba(28,28,28,0.22)' : 'rgba(0,0,0,0.07)'}`,
         backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
         transition: 'all 0.5s cubic-bezier(.4,0,.2,1)',
       }}>
         <div style={{
           fontSize: 9.5, fontWeight: 600, letterSpacing: '0.07em',
           textTransform: 'uppercase' as const,
-          color: hasCrystal ? PURPLE : '#c0bbb3',
+          color: hasCrystal ? PRIMARY : '#B0B0B0',
           marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6,
           transition: 'color 0.3s',
         }}>
@@ -322,7 +357,7 @@ export default function CanvasPanel({ canvas, crystallization }: CanvasPanelProp
           {hasCrystal && (
             <span style={{
               fontSize: 9, padding: '1px 6px', borderRadius: 99,
-              background: PURPLE_MID, color: PURPLE, fontWeight: 600,
+              background: PRIMARY_MID, color: PRIMARY, fontWeight: 600,
             }}>
               {isConfirmed ? '已确认' : '待改写确认'}
             </span>
@@ -330,7 +365,7 @@ export default function CanvasPanel({ canvas, crystallization }: CanvasPanelProp
         </div>
         <div style={{
           fontSize: 12, lineHeight: 1.68,
-          color: hasCrystal ? '#1c1a17' : '#c8c4bc',
+          color: hasCrystal ? '#1C1C1C' : '#BDBDBD',
           fontStyle: hasCrystal ? 'normal' : 'italic',
           fontWeight: hasCrystal ? 500 : 400,
           transition: 'all 0.4s',
@@ -348,7 +383,7 @@ export default function CanvasPanel({ canvas, crystallization }: CanvasPanelProp
               <span key={i} style={{
                 fontSize: 10.5, padding: '3px 10px', borderRadius: 99,
                 background: 'rgba(255,255,255,0.65)',
-                border: '1px solid rgba(0,0,0,0.09)', color: '#6e6a62',
+                border: '1px solid rgba(0,0,0,0.09)', color: '#5F5F5F',
                 backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
               }}>
                 {String(d)}
@@ -358,7 +393,7 @@ export default function CanvasPanel({ canvas, crystallization }: CanvasPanelProp
               <span key={`out-${i}`} style={{
                 fontSize: 10.5, padding: '3px 10px', borderRadius: 99,
                 background: 'rgba(255,255,255,0.5)',
-                border: '1px solid rgba(0,0,0,0.07)', color: '#c0bbb3',
+                border: '1px solid rgba(0,0,0,0.07)', color: '#B0B0B0',
                 textDecoration: 'line-through',
                 backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
               }}>
@@ -394,24 +429,24 @@ export default function CanvasPanel({ canvas, crystallization }: CanvasPanelProp
                     display: 'flex', alignItems: 'center',
                     justifyContent: 'space-between', marginBottom: 5, gap: 8,
                   }}>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: '#1c1a17' }}>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: '#1C1C1C' }}>
                       {dim.name}
                     </span>
                     <ResBadge type={dim.researchability} />
                   </div>
                   <div style={{
-                    fontSize: 11, color: '#6e6a63', lineHeight: 1.55,
+                    fontSize: 11, color: '#5F5F5F', lineHeight: 1.55,
                     marginBottom: dim.sufficiency_condition ? 6 : 0,
                   }}>
                     {dim.research_angle}
                   </div>
                   {dim.sufficiency_condition && (
                     <div style={{
-                      fontSize: 10, color: '#a09b94',
+                      fontSize: 10, color: '#8A8A8A',
                       background: 'rgba(0,0,0,0.04)',
                       borderRadius: 6, padding: '4px 8px', lineHeight: 1.5,
                     }}>
-                      <span style={{ fontWeight: 600, color: '#8c877f', marginRight: 3 }}>
+                      <span style={{ fontWeight: 600, color: '#6F6F6F', marginRight: 3 }}>
                         停止条件
                       </span>
                       {dim.sufficiency_condition}

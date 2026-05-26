@@ -2,7 +2,7 @@
 import os
 from pathlib import Path
 
-frontend_dist = str(Path("../frontend/dist").resolve())
+frontend_dist = str(Path("../frontend/out").resolve())
 
 a = Analysis(
     ["main.py"],

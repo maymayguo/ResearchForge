@@ -6,8 +6,8 @@ interface Props {
 
 const complexityConfig = {
   low: { label: "轻量", color: "text-emerald-600 bg-emerald-50 border-emerald-200" },
-  moderate: { label: "适中", color: "text-[#D97757] bg-[#FFF8F5] border-[#F0DDD5]" },
-  high: { label: "深度", color: "text-purple-600 bg-purple-50 border-purple-200" },
+  moderate: { label: "适中", color: "text-[#4A4A4A] bg-[#F4F4F4] border-[#D8D8D8]" },
+  high: { label: "深度", color: "text-[#1C1C1C] bg-[#F4F4F4] border-[#D8D8D8]" },
 };
 
 const researchabilityConfig = {
@@ -34,7 +34,7 @@ export function ResearchPlanView({ plan }: Props) {
       </div>
 
       {/* 核心问题 */}
-      <div className="bg-[#FAF9F7] border border-[#E8E6E1] rounded-xl p-4">
+      <div className="bg-[#FAFAFA] border border-[#E2E2E2] rounded-xl p-4">
         <div className="text-xs text-[#ABABAB] font-medium uppercase tracking-widest mb-2">核心研究问题</div>
         <p className="text-[#1A1A1A] leading-relaxed font-medium">{plan.question.core_statement}</p>
       </div>
@@ -45,7 +45,7 @@ export function ResearchPlanView({ plan }: Props) {
           <div className="space-y-2">
             {plan.question.sub_questions.map((q, i) => (
               <div key={q.id} className="flex gap-3 items-start">
-                <span className="text-xs text-[#D97757] font-semibold mt-0.5 flex-shrink-0 w-4">{i + 1}</span>
+                <span className="text-xs text-[#1C1C1C] font-semibold mt-0.5 flex-shrink-0 w-4">{i + 1}</span>
                 <span className="text-[#3A3A3A] leading-relaxed">{q.statement}</span>
               </div>
             ))}
@@ -60,9 +60,9 @@ export function ResearchPlanView({ plan }: Props) {
             {agentDims.map((dim, i) => {
               const cfg = researchabilityConfig[dim.researchability] ?? researchabilityConfig.desk_research;
               return (
-                <div key={dim.id} className={`border border-[#E8E6E1] rounded-xl p-3.5 space-y-2 bg-white ${cfg.borderClass}`}>
+                <div key={dim.id} className={`border border-[#E2E2E2] rounded-xl p-3.5 space-y-2 bg-white ${cfg.borderClass}`}>
                   <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-[#F4F2EE] text-[#D97757] text-xs font-semibold flex items-center justify-center flex-shrink-0">{i + 1}</span>
+                    <span className="w-5 h-5 rounded-full bg-[#F1F1F1] text-[#1C1C1C] text-xs font-semibold flex items-center justify-center flex-shrink-0">{i + 1}</span>
                     <span className="font-medium text-[#1A1A1A]">{dim.name}</span>
                     <span className="ml-auto text-xs text-[#8A8A8A]">{cfg.badge} {cfg.label}</span>
                   </div>
@@ -82,7 +82,7 @@ export function ResearchPlanView({ plan }: Props) {
                     {dim.search_keywords.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-1">
                         {dim.search_keywords.map((kw, j) => (
-                          <span key={j} className="px-1.5 py-0.5 rounded text-xs bg-[#F4F2EE] text-[#6A6A6A]">{kw}</span>
+                          <span key={j} className="px-1.5 py-0.5 rounded text-xs bg-[#F1F1F1] text-[#6A6A6A]">{kw}</span>
                         ))}
                       </div>
                     )}

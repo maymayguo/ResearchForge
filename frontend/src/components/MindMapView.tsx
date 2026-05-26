@@ -56,7 +56,7 @@ export function MindMapView({ canvas, researchPlan, questionDraft }: Props) {
         <div className="h-0.5 rounded-full overflow-hidden" style={{ background: "#EAE8E3" }}>
           <div
             className="h-full rounded-full transition-all duration-700"
-            style={{ width: `${Math.min(canvas.clarity_score / 10, 1) * 100}%`, background: "#D97757" }}
+            style={{ width: `${Math.min(canvas.clarity_score / 10, 1) * 100}%`, background: "#1C1C1C" }}
           />
         </div>
       )}
@@ -76,8 +76,8 @@ export function MindMapView({ canvas, researchPlan, questionDraft }: Props) {
 function PlanHierarchyTree({ plan }: { plan: ResearchPlan }) {
   const complexityConfig = {
     low: { label: "轻量", color: "#16A34A", bg: "#F0FDF4", border: "#86EFAC" },
-    moderate: { label: "适中", color: "#D97757", bg: "#FFF8F5", border: "#F0DDD5" },
-    high: { label: "深度", color: "#7C3AED", bg: "#F5F3FF", border: "#C4B5FD" },
+    moderate: { label: "适中", color: "#4A4A4A", bg: "#F4F4F4", border: "#D8D8D8" },
+    high: { label: "深度", color: "#1C1C1C", bg: "#F4F4F4", border: "#D8D8D8" },
   };
   const complexity = complexityConfig[plan.estimated_complexity] ?? complexityConfig.moderate;
 
@@ -116,11 +116,11 @@ function PlanHierarchyTree({ plan }: { plan: ResearchPlan }) {
         </span>
         {plan.question.hard_constraints.slice(0, 2).map((s, i) => (
           <span key={i} className="text-xs px-2 py-0.5 rounded-full"
-            style={{ background: "#F4F2EE", color: "#8A8A8A", border: "1px solid #E0DDD8" }}>✕ {s}</span>
+            style={{ background: "#F1F1F1", color: "#8A8A8A", border: "1px solid #D8D8D8" }}>✕ {s}</span>
         ))}
         {plan.question.open_directions.slice(0, 1).map((s, i) => (
           <span key={i} className="text-xs px-2 py-0.5 rounded-full"
-            style={{ background: "#EEF4FF", color: "#4A6A9A", border: "1px solid #D0DCEE" }}>→ {s}</span>
+            style={{ background: "#F1F1F1", color: "#5F5F5F", border: "1px solid #D8D8D8" }}>→ {s}</span>
         ))}
       </div>
 
@@ -138,9 +138,9 @@ function PlanHierarchyTree({ plan }: { plan: ResearchPlan }) {
                   isLast={isLastSq}
                   connector={
                     <div className="flex items-start gap-2 rounded-lg px-3 py-2"
-                      style={{ background: "#F5F3EE", border: "1px solid #E0DDD8" }}>
+                      style={{ background: "#F3F3F3", border: "1px solid #D8D8D8" }}>
                       <span className="text-xs font-bold flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center"
-                        style={{ background: "#D97757", color: "#fff" }}>{sqIdx + 1}</span>
+                        style={{ background: "#1C1C1C", color: "#fff" }}>{sqIdx + 1}</span>
                       <span className="text-xs leading-relaxed" style={{ color: "#2A2A2A" }}>{sq.statement}</span>
                     </div>
                   }
@@ -223,7 +223,7 @@ function PlanHierarchyTree({ plan }: { plan: ResearchPlan }) {
 
       {/* 探索姿态 */}
       {plan.research_philosophy && (
-        <div className="text-xs leading-relaxed pt-2 mt-1" style={{ color: "#ABABAB", borderTop: "1px solid #F0EDE8" }}>
+        <div className="text-xs leading-relaxed pt-2 mt-1" style={{ color: "#ABABAB", borderTop: "1px solid #ECECEC" }}>
           {plan.research_philosophy}
         </div>
       )}
@@ -250,7 +250,7 @@ function DimensionNode({ dim }: { dim: Dimension }) {
             <div className="flex flex-wrap gap-1">
               {dim.search_keywords.slice(0, 4).map((kw, i) => (
                 <span key={i} className="px-1.5 py-0.5 rounded text-xs"
-                  style={{ background: "#F4F2EE", color: "#6A6A6A" }}>{kw}</span>
+                  style={{ background: "#F1F1F1", color: "#6A6A6A" }}>{kw}</span>
               ))}
             </div>
           )}
@@ -267,7 +267,7 @@ function TreeBranch({ children, isLast }: { children: React.ReactNode; isLast?: 
     <div className="relative pl-4 mt-1.5">
       {!isLast && (
         <div className="absolute left-[7px] top-0 bottom-0 w-0.5 rounded-full"
-          style={{ background: "#D5D0C8" }} />
+          style={{ background: "#CFCFCF" }} />
       )}
       <div className="space-y-2">{children}</div>
     </div>
@@ -286,10 +286,10 @@ function TreeNode({
   return (
     <div className="relative">
       <div className="absolute left-[-16px] top-[14px] w-4 h-0.5 rounded-full"
-        style={{ background: "#D5D0C8" }} />
+        style={{ background: "#CFCFCF" }} />
       {!isLast && (
         <div className="absolute left-[-9px] top-[14px] bottom-[-8px] w-0.5 rounded-full"
-          style={{ background: "#D5D0C8" }} />
+          style={{ background: "#CFCFCF" }} />
       )}
       <div>{connector}</div>
       {children && <div className="mt-1.5">{children}</div>}
@@ -323,10 +323,10 @@ function DiscussionTree({ canvas, coreLabel }: { canvas: UnderstandingCanvas; co
         <div className="flex items-center gap-0.5">
           {phaseSteps.map((step, i) => (
             <div key={step.key} className="h-1 rounded-full flex-1 transition-all duration-500"
-              style={{ background: i <= currentStepIndex ? "#D97757" : "#E8E6E1" }} />
+              style={{ background: i <= currentStepIndex ? "#1C1C1C" : "#E2E2E2" }} />
           ))}
         </div>
-        <div className="text-xs text-center font-medium" style={{ color: "#D97757" }}>
+        <div className="text-xs text-center font-medium" style={{ color: "#1C1C1C" }}>
           {phaseSteps[currentStepIndex]?.label ?? canvas.phase}
         </div>
       </div>
@@ -351,18 +351,18 @@ function DiscussionTree({ canvas, coreLabel }: { canvas: UnderstandingCanvas; co
 
         {/* 锚点观察 */}
         {canvas.anchor_observation && (
-          <InfoCard label="锚点观察" accent="#D97757" bg="#FFF8F5" border="#F0DDD5">
+          <InfoCard label="锚点观察" accent="#1C1C1C" bg="#F6F6F6" border="#D8D8D8">
             <p className="text-xs leading-relaxed" style={{ color: "#1C1C1C" }}>{canvas.anchor_observation}</p>
           </InfoCard>
         )}
 
         {/* 核心假设 */}
         {canvas.key_assumption && (
-          <InfoCard label="核心假设" accent="#7A6A9A" bg="#F5F2FA" border="#DDD5EE">
+          <InfoCard label="核心假设" accent="#3A3A3A" bg="#F5F5F5" border="#DADADA">
             <p className="text-xs leading-relaxed" style={{ color: "#1C1C1C" }}>{canvas.key_assumption}</p>
             {canvas.assumption_confidence && (
               <span className="inline-block mt-1.5 text-xs px-2 py-0.5 rounded-full font-medium"
-                style={{ background: "#FFF8F5", color: "#D97757" }}>
+                style={{ background: "#F1F1F1", color: "#1C1C1C" }}>
                 {confidenceLabel[canvas.assumption_confidence]}
               </span>
             )}
@@ -416,15 +416,15 @@ function QuestionEvolutionFlow({ evo }: { evo: Array<{ version: number; statemen
               <div
                 className="w-full rounded-xl px-3 py-2.5 transition-all"
                 style={{
-                  background: isLatest ? "#1C1C1C" : "#F5F3EE",
-                  border: isLatest ? "none" : "1px solid #E0DDD8",
+                  background: isLatest ? "#1C1C1C" : "#F3F3F3",
+                  border: isLatest ? "none" : "1px solid #D8D8D8",
                 }}
               >
                 <div className="flex items-start gap-2">
                   <span
                     className="text-xs font-bold flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5"
                     style={{
-                      background: isLatest ? "#D97757" : "#D5D0C8",
+                      background: isLatest ? "#1C1C1C" : "#CFCFCF",
                       color: isLatest ? "#fff" : "#6A6A6A",
                     }}
                   >
@@ -435,7 +435,7 @@ function QuestionEvolutionFlow({ evo }: { evo: Array<{ version: number; statemen
                       {v.statement}
                     </p>
                     {v.trigger && (
-                      <p className="text-xs mt-0.5" style={{ color: isLatest ? "#D5D0C8" : "#BABABA" }}>
+                      <p className="text-xs mt-0.5" style={{ color: isLatest ? "#CFCFCF" : "#BABABA" }}>
                         触发：{v.trigger}
                       </p>
                     )}
@@ -444,9 +444,9 @@ function QuestionEvolutionFlow({ evo }: { evo: Array<{ version: number; statemen
               </div>
               {!isLatest && (
                 <div className="flex flex-col items-center py-0.5">
-                  <div className="w-0.5 h-3 rounded-full" style={{ background: "#D5D0C8" }} />
+                  <div className="w-0.5 h-3 rounded-full" style={{ background: "#CFCFCF" }} />
                   <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
-                    <path d="M5 6L0.669872 0.75H9.33013L5 6Z" fill="#D5D0C8" />
+                    <path d="M5 6L0.669872 0.75H9.33013L5 6Z" fill="#CFCFCF" />
                   </svg>
                 </div>
               )}

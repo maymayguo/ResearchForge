@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { authLogin, authRegister } from "../lib/api";
 
-const PURPLE = "#6c63e0";
-const BG = "#F5F4F0";
+const PRIMARY = "#1C1C1C";
+const BG = "#F5F5F5";
 
 /**
  * 预设的 demo 步骤，模拟苏格拉底对话的渐进式推进
@@ -56,20 +56,20 @@ export function LandingPage() {
       {/* ── 导航栏 ── */}
       <div className="flex items-center justify-between px-6 py-4 max-w-5xl mx-auto">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: PURPLE }}>
+          <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: PRIMARY }}>
             <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <circle cx="12" cy="12" r="9" strokeWidth={2} />
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l2.5 2" />
             </svg>
           </div>
-          <span className="text-sm font-bold" style={{ color: "#1c1a17" }}>Grove</span>
+          <span className="text-sm font-bold" style={{ color: "#1C1C1C" }}>Grove</span>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => { setShowAuth(true); setTab("login"); }}
             className="text-sm px-4 py-2 rounded-lg transition-colors"
-            style={{ color: "#6e6a62" }}
-            onMouseEnter={e => (e.currentTarget.style.background = "#EDEBE6")}
+            style={{ color: "#5F5F5F" }}
+            onMouseEnter={e => (e.currentTarget.style.background = "#ECECEC")}
             onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
           >
             登录
@@ -77,7 +77,7 @@ export function LandingPage() {
           <button
             onClick={() => { setShowAuth(true); setTab("register"); }}
             className="text-sm px-4 py-2 rounded-lg text-white font-medium transition-opacity"
-            style={{ background: PURPLE }}
+            style={{ background: PRIMARY }}
             onMouseEnter={e => (e.currentTarget.style.opacity = "0.9")}
             onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
           >
@@ -88,25 +88,25 @@ export function LandingPage() {
 
       {/* ── Hero 区域 ── */}
       <div className="max-w-3xl mx-auto px-6 pt-16 pb-12 text-center">
-        <h1 className="text-4xl font-bold leading-tight mb-4" style={{ color: "#1c1a17", letterSpacing: "-1px" }}>
+        <h1 className="text-4xl font-bold leading-tight mb-4" style={{ color: "#1C1C1C", letterSpacing: "-1px" }}>
           把你的模糊想法<br />
           变成清晰的研究框架
         </h1>
-        <p className="text-base leading-relaxed mb-8" style={{ color: "#7a7670" }}>
+        <p className="text-base leading-relaxed mb-8" style={{ color: "#686868" }}>
           一个苏格拉底式的 AI 对话伙伴。<br />
-          用 9 步引导你从「想研究什么」到一份结构完整的<strong style={{ color: "#1c1a17" }}>研究框架</strong>。
+          用 9 步引导你从「想研究什么」到一份结构完整的<strong style={{ color: "#1C1C1C" }}>研究框架</strong>。
         </p>
         <div className="flex items-center justify-center gap-3">
           <button
             onClick={() => { setShowAuth(true); setTab("register"); }}
             className="px-6 py-3 rounded-xl text-sm font-medium text-white transition-all"
-            style={{ background: PURPLE }}
-            onMouseEnter={e => { e.currentTarget.style.background = "#5a51c8"; e.currentTarget.style.transform = "translateY(-1px)"; }}
-            onMouseLeave={e => { e.currentTarget.style.background = PURPLE; e.currentTarget.style.transform = "translateY(0)"; }}
+            style={{ background: PRIMARY }}
+            onMouseEnter={e => { e.currentTarget.style.background = "#2F2F2F"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = PRIMARY; e.currentTarget.style.transform = "translateY(0)"; }}
           >
             开始使用
           </button>
-          <div className="text-xs" style={{ color: "#b5b0a8" }}>免费 · 无需信用卡</div>
+          <div className="text-xs" style={{ color: "#9A9A9A" }}>免费 · 无需信用卡</div>
         </div>
       </div>
 
@@ -117,15 +117,15 @@ export function LandingPage() {
           style={{ background: "#fff", boxShadow: "0 4px 32px rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.06)" }}
         >
           {/* Demo 头部 */}
-          <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: "#EEECE8" }}>
+          <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: "#E5E5E5" }}>
             <div className="flex items-center gap-2">
-              <div className="w-5 h-5 rounded flex items-center justify-center text-white text-[10px] font-bold" style={{ background: PURPLE }}>研</div>
+              <div className="w-5 h-5 rounded flex items-center justify-center text-white text-[10px] font-bold" style={{ background: PRIMARY }}>研</div>
               <span className="text-xs font-semibold" style={{ color: "#1C1C1C" }}>研究对话 Demo</span>
             </div>
             <div className="flex gap-1">
-              <div className="w-2 h-2 rounded-full" style={{ background: "#E4E1DB" }} />
-              <div className="w-2 h-2 rounded-full" style={{ background: "#E4E1DB" }} />
-              <div className="w-2 h-2 rounded-full" style={{ background: "#E4E1DB" }} />
+              <div className="w-2 h-2 rounded-full" style={{ background: "#D8D8D8" }} />
+              <div className="w-2 h-2 rounded-full" style={{ background: "#D8D8D8" }} />
+              <div className="w-2 h-2 rounded-full" style={{ background: "#D8D8D8" }} />
             </div>
           </div>
 
@@ -137,7 +137,7 @@ export function LandingPage() {
                 <div className="flex justify-end">
                   <div
                     className="max-w-[80%] text-sm px-3.5 py-2.5 rounded-2xl rounded-br-sm"
-                    style={{ background: "rgba(108,99,224,0.09)", color: "#1c1a17" }}
+                    style={{ background: "rgba(28,28,28,0.09)", color: "#1C1C1C" }}
                   >
                     {step.user}
                   </div>
@@ -146,7 +146,7 @@ export function LandingPage() {
                 <div className="flex justify-start animate-fadeIn">
                   <div
                     className="max-w-[80%] text-sm px-3.5 py-2.5 rounded-2xl rounded-bl-sm leading-relaxed"
-                    style={{ background: "#F5F4F0", color: "#3a3834" }}
+                    style={{ background: "#F5F5F5", color: "#3A3A3A" }}
                   >
                     {step.ai}
                   </div>
@@ -156,7 +156,7 @@ export function LandingPage() {
           </div>
 
           {/* Demo 控制 */}
-          <div className="px-4 py-3 border-t flex items-center justify-between" style={{ borderColor: "#EEECE8" }}>
+          <div className="px-4 py-3 border-t flex items-center justify-between" style={{ borderColor: "#E5E5E5" }}>
             <div className="flex gap-1">
               {DEMO_STEPS.map((_, i) => (
                 <button
@@ -164,7 +164,7 @@ export function LandingPage() {
                   onClick={() => setDemoStep(i)}
                   className="w-6 h-1.5 rounded-full transition-all"
                   style={{
-                    background: i <= demoStep ? PURPLE : "#E4E1DB",
+                    background: i <= demoStep ? PRIMARY : "#D8D8D8",
                     width: i === demoStep ? 20 : 6,
                   }}
                 />
@@ -174,7 +174,7 @@ export function LandingPage() {
               <button
                 onClick={() => setDemoStep(d => d + 1)}
                 className="text-xs px-3 py-1.5 rounded-lg text-white font-medium transition-opacity"
-                style={{ background: PURPLE }}
+                style={{ background: PRIMARY }}
               >
                 下一步
               </button>
@@ -193,7 +193,7 @@ export function LandingPage() {
 
       {/* ── 9 步流程 ── */}
       <div className="max-w-3xl mx-auto px-6 pb-20">
-        <h2 className="text-lg font-bold text-center mb-8" style={{ color: "#1c1a17" }}>9 步，从模糊到清晰</h2>
+        <h2 className="text-lg font-bold text-center mb-8" style={{ color: "#1C1C1C" }}>9 步，从模糊到清晰</h2>
         <div className="grid grid-cols-3 gap-3">
           {[
             { step: "探索", desc: "说出你脑中最初的想法" },
@@ -209,10 +209,10 @@ export function LandingPage() {
             <div
               key={item.step}
               className="text-center p-4 rounded-xl transition-all"
-              style={{ background: "rgba(108,99,224,0.04)", border: "1px solid rgba(108,99,224,0.08)" }}
+              style={{ background: "rgba(28,28,28,0.04)", border: "1px solid rgba(28,28,28,0.08)" }}
             >
-              <div className="text-xs font-semibold mb-1" style={{ color: PURPLE }}>{item.step}</div>
-              <div className="text-xs" style={{ color: "#a09b94" }}>{item.desc}</div>
+              <div className="text-xs font-semibold mb-1" style={{ color: PRIMARY }}>{item.step}</div>
+              <div className="text-xs" style={{ color: "#8A8A8A" }}>{item.desc}</div>
             </div>
           ))}
         </div>
@@ -220,13 +220,13 @@ export function LandingPage() {
 
       {/* ── 适用场景 ── */}
       <div className="max-w-3xl mx-auto px-6 pb-20">
-        <h2 className="text-lg font-bold text-center mb-6" style={{ color: "#1c1a17" }}>适用于</h2>
+        <h2 className="text-lg font-bold text-center mb-6" style={{ color: "#1C1C1C" }}>适用于</h2>
         <div className="flex justify-center gap-3 flex-wrap">
           {["市场研究", "竞品分析", "用户洞察", "行业趋势", "学术选题", "投资研究"].map(s => (
             <div
               key={s}
               className="text-sm px-4 py-2 rounded-full"
-              style={{ background: "rgba(108,99,224,0.07)", color: PURPLE, border: "1px solid rgba(108,99,224,0.15)" }}
+              style={{ background: "rgba(28,28,28,0.07)", color: PRIMARY, border: "1px solid rgba(28,28,28,0.15)" }}
             >
               {s}
             </div>
@@ -236,7 +236,7 @@ export function LandingPage() {
 
       {/* ── Footer ── */}
       <div className="text-center pb-8">
-        <p className="text-xs" style={{ color: "#c5c0b8" }}>Grove · Research Assistant</p>
+        <p className="text-xs" style={{ color: "#B8B8B8" }}>Grove · Research Assistant</p>
       </div>
 
       {/* ── 登录/注册 Modal ── */}
@@ -255,21 +255,21 @@ export function LandingPage() {
             <div className="flex items-center justify-between mb-4">
               <div className="flex flex-col items-start gap-1">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: PURPLE }}>
+                  <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: PRIMARY }}>
                     <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <circle cx="12" cy="12" r="9" strokeWidth={2} />
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l2.5 2" />
                     </svg>
                   </div>
-                  <span className="text-sm font-bold" style={{ color: "#1c1a17" }}>Grove</span>
+                  <span className="text-sm font-bold" style={{ color: "#1C1C1C" }}>Grove</span>
                 </div>
-                <span className="text-xs" style={{ color: "#a09b94" }}>研究设计助手</span>
+                <span className="text-xs" style={{ color: "#8A8A8A" }}>研究设计助手</span>
               </div>
               <button
                 onClick={() => setShowAuth(false)}
                 className="w-7 h-7 flex items-center justify-center rounded-lg transition-colors"
                 style={{ color: "#BABABA" }}
-                onMouseEnter={e => (e.currentTarget.style.background = "#F0EDE8")}
+                onMouseEnter={e => (e.currentTarget.style.background = "#ECECEC")}
                 onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
               >
                 ✕
@@ -277,7 +277,7 @@ export function LandingPage() {
             </div>
 
             {/* Tab */}
-            <div className="flex rounded-lg p-0.5 mb-4" style={{ background: "#F0EDE8" }}>
+            <div className="flex rounded-lg p-0.5 mb-4" style={{ background: "#ECECEC" }}>
               {(["login", "register"] as const).map(t => (
                 <button
                   key={t}
@@ -285,7 +285,7 @@ export function LandingPage() {
                   className="flex-1 py-1.5 rounded-md text-sm font-medium transition-all"
                   style={{
                     background: tab === t ? "#fff" : "transparent",
-                    color: tab === t ? "#1c1a17" : "#9c9890",
+                    color: tab === t ? "#1C1C1C" : "#767676",
                     boxShadow: tab === t ? "0 1px 3px rgba(0,0,0,0.08)" : "none",
                   }}
                 >
@@ -305,7 +305,7 @@ export function LandingPage() {
 
             <form onSubmit={handleAuth} className="space-y-3">
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#6e6a62" }}>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: "#5F5F5F" }}>
                   用户名{tab === "login" && " / 邮箱"}
                 </label>
                 <input
@@ -315,14 +315,14 @@ export function LandingPage() {
                   placeholder={tab === "login" ? "输入用户名或邮箱" : "设置用户名"}
                   required
                   className="w-full px-3 py-2.5 rounded-lg text-sm outline-none transition-all"
-                  style={{ background: "#F8F6F3", border: "1px solid #E4E1DB", color: "#1c1a17" }}
-                  onFocus={e => (e.target.style.borderColor = PURPLE)}
-                  onBlur={e => (e.target.style.borderColor = "#E4E1DB")}
+                  style={{ background: "#F7F7F7", border: "1px solid #D8D8D8", color: "#1C1C1C" }}
+                  onFocus={e => (e.target.style.borderColor = PRIMARY)}
+                  onBlur={e => (e.target.style.borderColor = "#D8D8D8")}
                 />
               </div>
               {tab === "register" && (
                 <div>
-                  <label className="block text-xs font-medium mb-1.5" style={{ color: "#6e6a62" }}>邮箱</label>
+                  <label className="block text-xs font-medium mb-1.5" style={{ color: "#5F5F5F" }}>邮箱</label>
                   <input
                     type="email"
                     value={email}
@@ -330,14 +330,14 @@ export function LandingPage() {
                     placeholder="your@email.com"
                     required
                     className="w-full px-3 py-2.5 rounded-lg text-sm outline-none transition-all"
-                    style={{ background: "#F8F6F3", border: "1px solid #E4E1DB", color: "#1c1a17" }}
-                    onFocus={e => (e.target.style.borderColor = PURPLE)}
-                    onBlur={e => (e.target.style.borderColor = "#E4E1DB")}
+                    style={{ background: "#F7F7F7", border: "1px solid #D8D8D8", color: "#1C1C1C" }}
+                    onFocus={e => (e.target.style.borderColor = PRIMARY)}
+                    onBlur={e => (e.target.style.borderColor = "#D8D8D8")}
                   />
                 </div>
               )}
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#6e6a62" }}>密码</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: "#5F5F5F" }}>密码</label>
                 <input
                   type="password"
                   value={password}
@@ -345,16 +345,16 @@ export function LandingPage() {
                   placeholder={tab === "register" ? "至少 6 位" : "输入密码"}
                   required
                   className="w-full px-3 py-2.5 rounded-lg text-sm outline-none transition-all"
-                  style={{ background: "#F8F6F3", border: "1px solid #E4E1DB", color: "#1c1a17" }}
-                  onFocus={e => (e.target.style.borderColor = PURPLE)}
-                  onBlur={e => (e.target.style.borderColor = "#E4E1DB")}
+                  style={{ background: "#F7F7F7", border: "1px solid #D8D8D8", color: "#1C1C1C" }}
+                  onFocus={e => (e.target.style.borderColor = PRIMARY)}
+                  onBlur={e => (e.target.style.borderColor = "#D8D8D8")}
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading}
                 className="w-full py-2.5 rounded-lg text-sm font-medium text-white transition-opacity disabled:opacity-50"
-                style={{ background: PURPLE }}
+                style={{ background: PRIMARY }}
               >
                 {loading ? "请稍候…" : tab === "login" ? "登录" : "创建账户"}
               </button>

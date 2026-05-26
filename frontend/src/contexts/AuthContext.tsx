@@ -1,9 +1,12 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+"use client";
+
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 import type { User } from "../types/auth";
 
 interface AuthContextValue {
   user: User | null;
   token: string | null;
+  isReady: boolean;
   login: (token: string, user: User) => void;
   logout: () => void;
   updateUser: (user: User) => void;
@@ -12,12 +15,21 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem("grove_token"));
-  const [user, setUser] = useState<User | null>(() => {
+  const [isReady, setIsReady] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    setToken(localStorage.getItem("grove_token"));
     const stored = localStorage.getItem("grove_user");
-    try { return stored ? JSON.parse(stored) : null; }
-    catch { return null; }
-  });
+    try {
+      setUser(stored ? JSON.parse(stored) : null);
+    } catch {
+      setUser(null);
+    } finally {
+      setIsReady(true);
+    }
+  }, []);
 
   const login = useCallback((newToken: string, newUser: User) => {
     localStorage.setItem("grove_token", newToken);
@@ -39,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, token, isReady, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

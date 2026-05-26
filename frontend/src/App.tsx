@@ -1,9 +1,12 @@
+"use client";
+
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ResearchDesigner } from "./components/ResearchDesigner";
 import { LandingPage } from "./components/LandingPage";
 
 function AppInner() {
-  const { token } = useAuth();
+  const { token, isReady } = useAuth();
+  if (!isReady) return null;
   if (!token) return <LandingPage />;
   return <ResearchDesigner />;
 }

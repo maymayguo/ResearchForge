@@ -6,7 +6,7 @@ import CanvasPanel from "./CanvasPanel";
 import { Sidebar } from "./Sidebar";
 import { SettingsModal } from "./SettingsModal";
 
-const PURPLE = "#6c63e0";
+const PRIMARY = "#1C1C1C";
 
 // ── 导出工具 ────────────────────────────────
 
@@ -197,6 +197,7 @@ export function ResearchDesigner() {
       refreshSessions();
     } catch (e: unknown) {
       if ((e as Error).name === "AbortError") return;
+      setMessages(prev => prev.filter(m => m.id !== userMsg.id));
       const msg = e instanceof Error ? e.message : "请求失败，请重试";
       if (msg.includes("Session not found") || msg.includes("404")) {
         setMessages([]);
@@ -305,25 +306,25 @@ export function ResearchDesigner() {
     : null;
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: "#F5F4F0", fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+    <div className="flex h-screen overflow-hidden" style={{ background: "#F5F5F5", fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
 
       {/* ── 左侧边栏 ── */}
       <Sidebar sessions={sessions} currentSessionId={sessionId} onNewSession={handleNewSession} onSelectSession={handleSelectSession} onDeleteSession={handleDeleteSession} />
 
       {/* ── 主区域 ── */}
-      <div className="flex flex-col flex-1 min-w-0" style={{ background: "#faf9f7" }}>
+      <div className="flex flex-col flex-1 min-w-0" style={{ background: "#FAFAFA" }}>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b" style={{ borderColor: "#EEECE8" }}>
+        <div className="flex items-center justify-between px-5 py-3.5 border-b" style={{ borderColor: "#E5E5E5" }}>
           <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ background: PURPLE }}>研</div>
+            <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ background: PRIMARY }}>研</div>
             <div>
               <div className="text-sm font-semibold" style={{ color: "#1C1C1C" }}>Grove</div>
               {canvas && !isInitialState && (
                 <div className="text-xs" style={{ color: "#ABABAB" }}>
                   {phaseLabel[canvas.phase] || canvas.phase}
                   {canvas.phase !== "confirmed" && canvas.clarity_score > 0 && (
-                    <span className="ml-1.5" style={{ color: PURPLE }}>清晰度 {canvas.clarity_score.toFixed(1)}/10</span>
+                    <span className="ml-1.5" style={{ color: PRIMARY }}>清晰度 {canvas.clarity_score.toFixed(1)}/10</span>
                   )}
                 </div>
               )}
@@ -334,9 +335,9 @@ export function ResearchDesigner() {
             <button
               onClick={() => setShowSettings(true)}
               className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors"
-              style={{ color: "#9c9890" }}
+              style={{ color: "#767676" }}
               title="设置"
-              onMouseEnter={e => (e.currentTarget.style.background = "#F0EDE8")}
+              onMouseEnter={e => (e.currentTarget.style.background = "#ECECEC")}
               onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
@@ -347,9 +348,9 @@ export function ResearchDesigner() {
             <button
               onClick={logout}
               className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors"
-              style={{ color: "#9c9890" }}
+              style={{ color: "#767676" }}
               title="退出登录"
-              onMouseEnter={e => (e.currentTarget.style.background = "#F0EDE8")}
+              onMouseEnter={e => (e.currentTarget.style.background = "#ECECEC")}
               onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
@@ -369,10 +370,10 @@ export function ResearchDesigner() {
               </div>
             )}
 
-            <h1 className="text-2xl font-bold text-center mb-3" style={{ color: "#1c1a17", letterSpacing: "-0.5px" }}>
+            <h1 className="text-2xl font-bold text-center mb-3" style={{ color: "#1C1C1C", letterSpacing: "-0.5px" }}>
               你想研究什么？
             </h1>
-            <p className="text-sm text-center mb-8 leading-relaxed" style={{ color: "#a09b94" }}>
+            <p className="text-sm text-center mb-8 leading-relaxed" style={{ color: "#8A8A8A" }}>
               告诉我你脑子里现在的想法——可以是一个方向、<br />一件让你觉得"有点奇怪"的事，或者一个领域。
             </p>
 
@@ -395,9 +396,9 @@ export function ResearchDesigner() {
                       key={hint}
                       onClick={() => setInput(prev => prev ? prev + "，" + hint : hint)}
                       className="text-xs px-2.5 py-1 rounded-full transition-colors"
-                      style={{ background: "rgba(108,99,224,0.07)", color: PURPLE, border: "1px solid rgba(108,99,224,0.15)" }}
-                      onMouseEnter={e => (e.currentTarget.style.background = "rgba(108,99,224,0.14)")}
-                      onMouseLeave={e => (e.currentTarget.style.background = "rgba(108,99,224,0.07)")}
+                      style={{ background: "rgba(28,28,28,0.07)", color: PRIMARY, border: "1px solid rgba(28,28,28,0.15)" }}
+                      onMouseEnter={e => (e.currentTarget.style.background = "rgba(28,28,28,0.14)")}
+                      onMouseLeave={e => (e.currentTarget.style.background = "rgba(28,28,28,0.07)")}
                     >
                       {hint}
                     </button>
@@ -407,7 +408,7 @@ export function ResearchDesigner() {
                   onClick={() => doSend(input)}
                   disabled={!input.trim() || loading}
                   className="w-8 h-8 rounded-full flex items-center justify-center text-white transition-opacity disabled:opacity-30"
-                  style={{ background: PURPLE }}
+                  style={{ background: PRIMARY }}
                 >
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 14 14" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M2 7h10M7 2l5 5-5 5" />
@@ -416,11 +417,11 @@ export function ResearchDesigner() {
               </div>
             </div>
 
-            <p className="text-xs mt-4" style={{ color: "#c5c0b8" }}>Enter 发送 · Shift+Enter 换行</p>
+            <p className="text-xs mt-4" style={{ color: "#B8B8B8" }}>Enter 发送 · Shift+Enter 换行</p>
 
             {/* ── 预设研究方向卡片 ── */}
             <div className="mt-5 w-full max-w-xl">
-              <p className="text-xs mb-2.5 text-center" style={{ color: "#b5b0a8" }}>或者选择一个方向试试</p>
+              <p className="text-xs mb-2.5 text-center" style={{ color: "#9A9A9A" }}>或者选择一个方向试试</p>
               <div className="grid grid-cols-2 gap-2">
                 {[
                   { title: "低空经济投资机会", desc: "分析市场规模、政策环境和投资逻辑" },
@@ -432,12 +433,12 @@ export function ResearchDesigner() {
                     key={card.title}
                     onClick={() => { setInput(card.title + "：" + card.desc); setTimeout(() => centerTextareaRef.current?.focus(), 50); }}
                     className="text-left p-3 rounded-xl transition-all"
-                    style={{ background: "rgba(108,99,224,0.05)", border: "1px solid rgba(108,99,224,0.12)" }}
-                    onMouseEnter={e => { e.currentTarget.style.background = "rgba(108,99,224,0.12)"; e.currentTarget.style.borderColor = PURPLE; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = "rgba(108,99,224,0.05)"; e.currentTarget.style.borderColor = "rgba(108,99,224,0.12)"; }}
+                    style={{ background: "rgba(28,28,28,0.05)", border: "1px solid rgba(28,28,28,0.12)" }}
+                    onMouseEnter={e => { e.currentTarget.style.background = "rgba(28,28,28,0.12)"; e.currentTarget.style.borderColor = PRIMARY; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = "rgba(28,28,28,0.05)"; e.currentTarget.style.borderColor = "rgba(28,28,28,0.12)"; }}
                   >
-                    <div className="text-sm font-medium mb-0.5" style={{ color: "#1c1a17" }}>{card.title}</div>
-                    <div className="text-xs" style={{ color: "#a09b94" }}>{card.desc}</div>
+                    <div className="text-sm font-medium mb-0.5" style={{ color: "#1C1C1C" }}>{card.title}</div>
+                    <div className="text-xs" style={{ color: "#8A8A8A" }}>{card.desc}</div>
                   </button>
                 ))}
               </div>
@@ -459,11 +460,11 @@ export function ResearchDesigner() {
                 <div className="flex items-center gap-3 pl-10">
                   <div className="flex gap-1">
                     {[0, 150, 300].map(d => (
-                      <span key={d} className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: PURPLE, animationDelay: `${d}ms` }} />
+                      <span key={d} className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: PRIMARY, animationDelay: `${d}ms` }} />
                     ))}
                   </div>
                   <span className="text-xs" style={{ color: "#BABABA" }}>正在思考…</span>
-                  <button onClick={handleStop} className="text-xs underline underline-offset-2 transition-colors" style={{ color: "#BABABA" }} onMouseEnter={e => (e.currentTarget.style.color = PURPLE)} onMouseLeave={e => (e.currentTarget.style.color = "#BABABA")}>中断</button>
+                  <button onClick={handleStop} className="text-xs underline underline-offset-2 transition-colors" style={{ color: "#BABABA" }} onMouseEnter={e => (e.currentTarget.style.color = PRIMARY)} onMouseLeave={e => (e.currentTarget.style.color = "#BABABA")}>中断</button>
                 </div>
               )}
               <div ref={bottomRef} />
@@ -471,13 +472,13 @@ export function ResearchDesigner() {
 
             {/* 问题草稿区 */}
             {isCrystallizeQuestion && questionDraft && (
-              <div className="mx-5 mb-3 p-4 rounded-xl" style={{ background: "rgba(108,99,224,0.05)", border: "1px solid rgba(108,99,224,0.18)" }}>
-                <div className="text-xs font-semibold mb-2" style={{ color: PURPLE }}>研究问题草稿</div>
+              <div className="mx-5 mb-3 p-4 rounded-xl" style={{ background: "rgba(28,28,28,0.05)", border: "1px solid rgba(28,28,28,0.18)" }}>
+                <div className="text-xs font-semibold mb-2" style={{ color: PRIMARY }}>研究问题草稿</div>
                 <p className="text-sm leading-relaxed" style={{ color: "#1C1C1C" }}>{questionDraft.core_statement}</p>
                 {questionDraft.hard_constraints.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {questionDraft.hard_constraints.map((s, i) => (
-                      <span key={i} className="text-xs px-2 py-0.5 rounded-full" style={{ background: "#F4F2EE", color: "#8A8A8A" }}>✕ {s}</span>
+                      <span key={i} className="text-xs px-2 py-0.5 rounded-full" style={{ background: "#F1F1F1", color: "#8A8A8A" }}>✕ {s}</span>
                     ))}
                   </div>
                 )}
@@ -487,31 +488,31 @@ export function ResearchDesigner() {
 
             {/* 框架生成提示 */}
             {hasFramework && researchPlan && (
-              <div className="text-center text-xs py-2 border-t" style={{ background: "rgba(108,99,224,0.04)", color: PURPLE, borderColor: "rgba(108,99,224,0.15)" }}>
+              <div className="text-center text-xs py-2 border-t" style={{ background: "rgba(28,28,28,0.04)", color: PRIMARY, borderColor: "rgba(28,28,28,0.15)" }}>
                 {isConfirmed ? "研究框架已确认 · 可以导出或发送给 Deep Research Agent" : "研究框架已生成 · 可以导出或继续对话完善"}
               </div>
             )}
 
             {/* 导出操作区 */}
             {hasFramework && researchPlan && (
-              <div className="px-4 pt-3 pb-1 border-t" style={{ borderColor: "#EEECE8" }}>
+              <div className="px-4 pt-3 pb-1 border-t" style={{ borderColor: "#E5E5E5" }}>
                 <div className="flex gap-2 flex-wrap">
                   <button
                     onClick={handleSendToAgent}
                     className="flex-1 px-3 py-2 rounded-xl text-xs font-medium text-white transition-colors"
-                    style={{ background: copied ? "#27AE60" : PURPLE, minWidth: 0 }}
+                    style={{ background: copied ? "#27AE60" : PRIMARY, minWidth: 0 }}
                   >
                     {copied ? "已复制 ✓" : "发送给 Deep Research Agent"}
                   </button>
-                  <button onClick={handleExportJSON} className="px-3 py-2 rounded-xl text-xs font-medium transition-colors" style={{ background: "#F0EDE8", color: "#3A3A3A" }}>JSON</button>
-                  <button onClick={handleExportMarkdown} className="px-3 py-2 rounded-xl text-xs font-medium transition-colors" style={{ background: "#F0EDE8", color: "#3A3A3A" }}>Markdown</button>
+                  <button onClick={handleExportJSON} className="px-3 py-2 rounded-xl text-xs font-medium transition-colors" style={{ background: "#ECECEC", color: "#3A3A3A" }}>JSON</button>
+                  <button onClick={handleExportMarkdown} className="px-3 py-2 rounded-xl text-xs font-medium transition-colors" style={{ background: "#ECECEC", color: "#3A3A3A" }}>Markdown</button>
                 </div>
               </div>
             )}
 
             {/* 输入区 */}
-            <div className="px-4 py-3 border-t" style={{ borderColor: "#EEECE8", background: "#faf9f7" }}>
-              <div className="flex gap-2 items-end rounded-xl p-1" style={{ border: "1px solid #E4E1DB", background: "#F5F3EF" }}>
+            <div className="px-4 py-3 border-t" style={{ borderColor: "#E5E5E5", background: "#FAFAFA" }}>
+              <div className="flex gap-2 items-end rounded-xl p-1" style={{ border: "1px solid #D8D8D8", background: "#F3F3F3" }}>
                 <textarea
                   ref={textareaRef}
                   value={input}
@@ -524,13 +525,13 @@ export function ResearchDesigner() {
                   style={{ color: "#1C1C1C" }}
                 />
                 {loading ? (
-                  <button onClick={handleStop} className="mb-1.5 mr-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors" style={{ background: "#F0EDE8", color: "#6A6A6A" }}>停止</button>
+                  <button onClick={handleStop} className="mb-1.5 mr-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors" style={{ background: "#ECECEC", color: "#6A6A6A" }}>停止</button>
                 ) : (
                   <button onClick={handleSend} disabled={!input.trim()}
                     className="mb-1.5 mr-1.5 px-4 py-1.5 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-30"
-                    style={{ background: PURPLE }}
-                    onMouseEnter={e => { if (!(e.currentTarget as HTMLButtonElement).disabled) e.currentTarget.style.background = "#5a51c8"; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = PURPLE; }}
+                    style={{ background: PRIMARY }}
+                    onMouseEnter={e => { if (!(e.currentTarget as HTMLButtonElement).disabled) e.currentTarget.style.background = "#2F2F2F"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = PRIMARY; }}
                   >
                     发送
                   </button>
@@ -549,9 +550,9 @@ export function ResearchDesigner() {
       <div
         onMouseDown={handleDividerDown}
         className="flex-shrink-0 flex items-center justify-center cursor-col-resize group"
-        style={{ width: "6px", background: "#EEECE8" }}
+        style={{ width: "6px", background: "#E5E5E5" }}
       >
-        <div className="w-0.5 h-8 rounded-full transition-colors" style={{ background: "#D5D1CC" }} />
+        <div className="w-0.5 h-8 rounded-full transition-colors" style={{ background: "#CFCFCF" }} />
       </div>
 
       {/* ── 右侧画布 ── */}
@@ -587,13 +588,13 @@ function MessageBubble({ msg }: { msg: Message }) {
   return (
     <div className={`flex gap-2.5 ${isUser ? "justify-end" : "justify-start"}`}>
       {!isUser && (
-        <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-0.5" style={{ background: PURPLE }}>研</div>
+        <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-0.5" style={{ background: PRIMARY }}>研</div>
       )}
       <div
         className="max-w-[78%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap"
         style={isUser
           ? { background: "#1C1C1C", color: "#fff", borderBottomRightRadius: "4px" }
-          : { background: "#F4F2EE", color: "#1C1C1C", borderBottomLeftRadius: "4px", border: "1px solid #ECE9E4" }
+          : { background: "#F1F1F1", color: "#1C1C1C", borderBottomLeftRadius: "4px", border: "1px solid #E2E2E2" }
         }
       >
         {content}

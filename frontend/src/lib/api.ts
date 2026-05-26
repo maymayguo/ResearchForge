@@ -1,9 +1,10 @@
 import type { CreateSessionResponse, ChatResponse, Session, Message, UnderstandingCanvas, ResearchPlan } from "../types/research";
 import type { TokenResponse, LoginRequest, RegisterRequest, User } from "../types/auth";
 
-const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 function getToken(): string | null {
+  if (typeof window === "undefined") return null;
   return localStorage.getItem("grove_token");
 }
 
