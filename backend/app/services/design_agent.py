@@ -84,12 +84,29 @@ class DesignAgent:
         last_error = None
         for attempt in range(3):
             try:
+                call_messages = messages
+                if attempt > 0:
+                    retry_hint = (
+                        "\n\n[重试约束]\n"
+                        "上一次模型输出不是完整合法 JSON。请重新生成本轮回复，必须满足：\n"
+                        "1. 只输出一个完整 JSON 对象，不要输出 markdown 或解释文字。\n"
+                        "2. reply 控制在 180 字以内。\n"
+                        "3. 如果输出 research_plan，dimensions 最多 4 个；每个数组字段最多 3 项。\n"
+                        "4. 宁可少写，也必须保证 JSON 完整闭合。\n"
+                        "[END 重试约束]"
+                    )
+                    call_messages = messages[:-1] + [
+                        {**messages[-1], "content": messages[-1]["content"] + retry_hint}
+                    ]
                 raw = await self.llm.chat(
                     system=SYSTEM_PROMPT,
-                    messages=messages,
+                    messages=call_messages,
                     response_format="json",
                 )
-                result = self._parse_response(raw.content, canvas)
+                logger.info(
+                    f"[DesignAgent] LLM output tokens={raw.output_tokens}, finish_reason={raw.finish_reason}"
+                )
+                result = self._parse_response(raw.content, canvas, raw.finish_reason)
                 # 如果 reply 是错误提示（解析失败的回退值），继续重试
                 if result[0].startswith("（模型回复格式异常"):
                     last_error = "JSON parse fallback triggered"
@@ -126,15 +143,22 @@ class DesignAgent:
         self,
         raw_content: str,
         current_canvas: UnderstandingCanvas,
+        finish_reason: Optional[str] = None,
     ) -> tuple[str, UnderstandingCanvas, Optional[ResearchPlan], Optional[ResearchQuestion]]:
         """
         解析 LLM 返回的 JSON，提取 reply、更新 canvas、提取结晶产出。
         对解析失败有容错处理。
         """
+        raw_content = raw_content or ""
         content = raw_content.strip()
 
         # 0. 剥掉推理模型的思考过程块（MiniMax / DeepSeek-R1 等）
         content = re.sub(r'<think>.*?</think>', '', content, flags=re.DOTALL).strip()
+
+        if not content:
+            raise RuntimeError(
+                f"模型返回空内容（finish_reason={finish_reason or 'unknown'}），已触发重试"
+            )
 
         # 1. 剥掉 markdown 代码块
         content = re.sub(r'^```(?:json)?\s*\n?', '', content, flags=re.MULTILINE)
@@ -151,11 +175,11 @@ class DesignAgent:
         try:
             data = json.loads(content)
         except json.JSONDecodeError as e:
-            # 检测是否因 token 截断（结尾缺少 }）——截断时重试没意义，直接抛出让上层处理
-            is_truncated = not content.rstrip().endswith("}")
+            # 检测是否因 token 截断（结尾缺少 } 或服务商明确返回长度停止）
+            is_truncated = finish_reason in ("length", "max_tokens") or not content.rstrip().endswith("}")
             logger.warning(
                 f"[DesignAgent] JSON parse failed ({'truncated' if is_truncated else 'malformed'}): {e}. "
-                f"Raw tail: ...{raw_content[-100:]}"
+                f"finish_reason={finish_reason}, Raw tail: ...{raw_content[-100:]}"
             )
             if is_truncated:
                 raise RuntimeError(f"模型输出被截断（max_tokens 不足），JSON 不完整：{e}")

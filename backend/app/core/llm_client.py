@@ -15,6 +15,7 @@ class LLMResponse(BaseModel if False else object):
     content: str
     input_tokens: int = 0
     output_tokens: int = 0
+    finish_reason: Optional[str] = None
 
 
 class LLMClient:
@@ -117,10 +118,16 @@ class LLMClient:
             return self._client.messages.create(**kwargs)
 
         resp = await loop.run_in_executor(None, _call)
+        content = "".join(
+            getattr(block, "text", "")
+            for block in resp.content
+            if getattr(block, "type", None) == "text"
+        )
         return _LLMResponse(
-            content=resp.content[0].text,
+            content=content,
             input_tokens=resp.usage.input_tokens,
             output_tokens=resp.usage.output_tokens,
+            finish_reason=getattr(resp, "stop_reason", None),
         )
 
     async def _openai_chat(self, system: str, messages: list[dict], response_format: Optional[str]) -> LLMResponse:
@@ -141,15 +148,24 @@ class LLMClient:
             return self._client.chat.completions.create(**kwargs)
 
         resp = await loop.run_in_executor(None, _call)
+        choice = resp.choices[0]
         return _LLMResponse(
-            content=resp.choices[0].message.content,
+            content=choice.message.content or "",
             input_tokens=resp.usage.prompt_tokens,
             output_tokens=resp.usage.completion_tokens,
+            finish_reason=getattr(choice, "finish_reason", None),
         )
 
 
 class _LLMResponse:
-    def __init__(self, content: str, input_tokens: int = 0, output_tokens: int = 0):
+    def __init__(
+        self,
+        content: str,
+        input_tokens: int = 0,
+        output_tokens: int = 0,
+        finish_reason: Optional[str] = None,
+    ):
         self.content = content
         self.input_tokens = input_tokens
         self.output_tokens = output_tokens
+        self.finish_reason = finish_reason

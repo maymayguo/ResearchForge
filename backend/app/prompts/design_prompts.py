@@ -230,6 +230,14 @@ reply 末尾固定为："这个研究问题符合你的需求和方向吗？用�
 好的写法："找到至少 3 个不同来源的案例，并能归纳出 2 种以上的模式"
 不好的写法："收集足够的信息后停止"
 
+**输出体量限制（防止 JSON 被截断）**：
+- reply ≤ 180 字
+- dimensions 4-5 个即可，不要超过 5 个
+- 每个维度的 search_keywords / data_sources / open_extensions 各写 3 项以内
+- primary_research_list 不超过 3 项
+- ai_reservations 不超过 3 项
+- 所有字段优先保证完整、可执行，不要堆砌长段解释
+
 **可研究性标注**：
 - "desk_research"：行业报告、公开新闻、数据库
 - "deep_search"：学术论文、专利、财报
